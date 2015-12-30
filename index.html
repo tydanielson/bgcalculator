@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="wsi">
+<head>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.8.3/angular-material.min.css">
+
+  <meta name="viewport" content="initial-scale=1" />
+</head>
+<body class="md-padding" >
+
+
+<md-content class="md-padding" ng-controller="WsiCtrl">
+
+<h2>Ben Graham Calculator</h2>
+
+<div layout="row" flex="40">
+<div layout="column">
+    <md-input-container>
+      <label>Market Cap</label>
+      <input type="text" ng-model="ben.marketCap" required>
+    </md-input-container>
+
+    <div layout="row">
+        <md-input-container>
+          <label>Current Assets</label>
+          <input type="text" ng-model="ben.currentAssets" required>
+        </md-input-container>
+
+        <md-input-container>
+          <label>Current Debt</label>
+          <input type="text" ng-model="ben.currentDebt" required>
+        </md-input-container>
+    </div>
+
+    <div layout="row">
+        <md-input-container>
+          <label>Long-Term Debt</label>
+          <input type="text" ng-model="ben.longTermDebt" required>
+        </md-input-container>
+
+        <md-input-container>
+          <label>Working Capital</label>
+          <input type="text" ng-model="ben.workingCapital" required>
+        </md-input-container>
+    </div>
+
+    <md-input-container>
+        <label>Consecutive years positive income</label>
+        <input type="text" ng-model="ben.yrsPositiveIncome" required>
+    </md-input-container>
+
+    <md-input-container>
+        <label>Consecutive years dividend</label>
+        <input type="text" ng-model="ben.yrsDividend" required>
+    </md-input-container>
+
+</div>
+
+</div>
+</md-content>
+
+<!-- Angular Material Dependencies -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.8.3/angular-material.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
