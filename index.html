@@ -53,6 +53,29 @@
         <input type="text" ng-model="ben.yrsDividend" required>
     </md-input-container>
 
+    <md-input-container>
+        <label>10 yrs. continuous growth </label>
+        <input type="text" ng-model="ben.yrsGrowth" required>
+    </md-input-container>
+
+    <div layout="row">
+        <md-input-container>
+          <label>P/E</label>
+          <input type="text" ng-model="ben.pe" required>
+        </md-input-container>
+
+        <md-input-container>
+          <label>P/B</label>
+          <input type="text" ng-model="ben.pb" required>
+        </md-input-container>
+    </div>
+
+    <md-input-container>
+        <label>Dividend %</label>
+        <input type="text" ng-model="ben.dividend" required>
+    </md-input-container>
+
+    <md-button class="md-raised md-primary" ng-click="calculate()">Calculate</md-button>
 </div>
 
 </div>
