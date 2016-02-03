@@ -14,79 +14,70 @@
 <h2>Ben Graham Calculator</h2>
 
 <div layout="row" flex="40">
-<div layout="column">
+<ng-form name="benForm" layout="column">
 
     <md-input-container>
       <label>Stock Ticker</label>
-      <input type="text" ng-model="ben.ticker">
+      <input type="text" ng-model="ben.ticker" name="ticker" required>
     </md-input-container>
 
-    <md-button class="md-raised md-primary" ng-click="getTickerData()">Get Data is avilable...</md-button>
-
-
+    <md-button class="md-raised md-primary" ng-click="getCompanyData()" ng-disabled="benForm.ticker.$invalid">Get Ticker Data</md-button>
+    <br/>
+    {{quote.Name}} {{quote.LastTradePrice}}
+    <br/>
     <md-input-container>
       <label>Market Cap</label>
-      <input type="text" ng-model="ben.marketCap" required>
+      <input type="text" ng-model="quote.MarketCapitalization" required>
     </md-input-container>
 
     <div layout="row">
         <md-input-container>
-          <label>Current Assets</label>
-          <input type="text" ng-model="ben.currentAssets" required>
+          <label>Current Ratio</label>
+          <input type="text" ng-model="ratios.currentRatio" required>
         </md-input-container>
 
         <md-input-container>
-          <label>Current Debt</label>
-          <input type="text" ng-model="ben.currentDebt" required>
+          <label>Quick Ratio</label>
+          <input type="text" ng-model="ratios.quick" required>
         </md-input-container>
     </div>
-
-    <div layout="row">
-        <md-input-container>
-          <label>Long-Term Debt</label>
-          <input type="text" ng-model="ben.longTermDebt" required>
-        </md-input-container>
-
-        <md-input-container>
-          <label>Working Capital</label>
-          <input type="text" ng-model="ben.workingCapital" required>
-        </md-input-container>
-    </div>
-
-    <md-input-container>
-        <label>Consecutive years positive income</label>
-        <input type="text" ng-model="ben.yrsPositiveIncome" required>
-    </md-input-container>
-
-    <md-input-container>
-        <label>Consecutive years dividend</label>
-        <input type="text" ng-model="ben.yrsDividend" required>
-    </md-input-container>
-
-    <md-input-container>
-        <label>10 yrs. continuous growth </label>
-        <input type="text" ng-model="ben.yrsGrowth" required>
-    </md-input-container>
 
     <div layout="row">
         <md-input-container>
           <label>P/E</label>
-          <input type="text" ng-model="ben.pe" required>
+          <input type="text" ng-model="quote.PeRatio" required>
         </md-input-container>
 
         <md-input-container>
           <label>P/B</label>
-          <input type="text" ng-model="ben.pb" required>
+          <input type="text" ng-model="quote.BookValue" required>
         </md-input-container>
     </div>
 
     <md-input-container>
         <label>Dividend %</label>
-        <input type="text" ng-model="ben.dividend" required>
+        <input type="text" ng-model="ratios.dividend" required>
     </md-input-container>
+<!-- 
+    <div layout="row">
+        <md-input-container>
+            <label>+Income yrs.</label>
+            <input type="text" ng-model="ben.yrsPositiveIncome" required>
+        </md-input-container>
 
-    <md-button class="md-raised md-primary" ng-click="calculate()">Calculate</md-button>
-</div>
+        <md-input-container>
+            <label>Dividend yrs.</label>
+            <input type="text" ng-model="ben.yrsDividend" required>
+        </md-input-container>
+
+        <md-input-container>
+            <label>Growth yrs.</label>
+            <input type="text" ng-model="ben.yrsGrowth" required>
+        </md-input-container>
+    </div> -->
+
+<!--     <md-button class="md-raised md-primary" ng-click="calculate()">Calculate</md-button> -->
+</ng-form>
 
 </div>
 </md-content>
