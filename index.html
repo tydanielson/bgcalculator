@@ -11,7 +11,7 @@
 
 <md-content class="md-padding" ng-controller="WsiCtrl">
 
-<h2>Ben Graham Calculator</h2>
+<h2>Stock Ratios</h2>
 
 <div layout="row" flex="40">
 <ng-form name="benForm" layout="column">
@@ -37,8 +37,8 @@
         </md-input-container>
 
         <md-input-container>
-          <label>Quick Ratio</label>
-          <input type="text" ng-model="ratios.quick" required>
+          <label>Long-term Debt Coverage Ratio</label>
+          <input type="text" ng-model="balance.longTermDebtCoverageRatio" required>
         </md-input-container>
     </div>
 
@@ -58,6 +58,7 @@
         <label>Dividend %</label>
         <input type="text" ng-model="ratios.dividend" required>
     </md-input-container>
+
 <!-- 
     <div layout="row">
         <md-input-container>
