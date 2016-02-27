@@ -13,7 +13,7 @@ var app = angular.module('wsi', ['ngMaterial'])
 		$httpProvider.defaults.headers.common["Content-Type"] = "text/plain";
  		$httpProvider.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
  		$httpProvider.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS';
-		$httpProvider.defaults.headers.common['Ocp-Apim-Subscription-Key'] = '';
+		$httpProvider.defaults.headers.common['Ocp-Apim-Subscription-Key'] = '5053da1874224fb1a0de3c4cd5f51a60';
 		$httpProvider.defaults.useXDomain = true;
 		delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
