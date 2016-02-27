@@ -42,8 +42,12 @@ app.controller('WsiCtrl', function($scope, $http){
 	};
 
 	$scope.getCompanyData = function() {
-		$scope.getBalanceSheet();
-		$scope.getStockQuote();
+		//clear out the existing values
+		$scope.ratios = {};
+		$scope.quote = {};
+		$scope.balance = {};
+		//$scope.getBalanceSheet();
+		//$scope.getStockQuote();
 		$scope.getRatios();
 	};
 
@@ -55,7 +59,6 @@ app.controller('WsiCtrl', function($scope, $http){
 				$scope.balance = data.data;
 				var bal = data.data.Data;
 				$scope.balance.longTermDebtCoverageRatio = (bal.AssetsCurrent - bal.LiabilitiesCurrent) / bal.LongTermDebtNoncurrent;
-				//console.log(data.data.AssetsCurrent);
 			}, function(data){
 				alert('error');
 			});
@@ -86,6 +89,7 @@ app.controller('WsiCtrl', function($scope, $http){
 				var longTermDebt = data.data.LongTermDebt.Recent["Latest Qtr"];
 				//console.log(workingCapital, longTermDebt);
 				//$scope.ratios.longTermToWorking =
+				$scope.ratios.revenuetenyr = data.data.RevenueTenYearAverage.Historical[Object.keys(data.data.RevenueTenYearAverage.Historical)[Object.keys(data.data.RevenueTenYearAverage.Historical).length - 1]];
 			}, function(data){
 				alert('error');
 			});

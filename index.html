@@ -55,9 +55,16 @@
     </div>
 
     <md-input-container>
-        <label>Dividend %</label>
+        <label>Dividend</label>
         <input type="text" ng-model="ratios.dividend" required>
     </md-input-container>
+
+    <md-input-container>
+        <label>10yr. Average Revenue</label>
+        <input type="text" ng-model="ratios.revenuetenyr" required>
+    </md-input-container>
+
+    {{calculateBenGrahamPts()}}
 
 <!-- 
     <div layout="row">
