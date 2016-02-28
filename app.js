@@ -24,52 +24,83 @@ app.controller('WsiCtrl', function($scope, $http){
 	$scope.ratios = {};
 	$scope.quote = {};
 
-	$scope.isRevenueValid = function(value){
-		return value >= 500 ? true:false;
-	}
+	$scope.previousLookups = [];
+
+	//revenue over 500 million = one point
+	$scope.isRevenueValid = function(){
+		return $scope.ratios.revenue >= 500 ? true : false;
+	};
+
+	//greater then 2.0 = half pt
+	$scope.isCurrentRatioValid = function(){
+		return $scope.ratios.currentRatio >= 2.0 ? true : false;
+	};
+
+	//greater then 1.0 = half pt
+	$scope.isLongTermDebtCoverageRatioValid = function(){
+		return $scope.ratios.longTermDebtCoverageRatio >= 1.0 ? true : false;
+	};
+
+	//p/e less then 15 = one point
+	$scope.isPeRatioValid = function(){
+		return $scope.quote.PeRatio <= 15 ? true : false;
+	};
+
+	//p/b ratio less then 1.5 = one point
+	$scope.isPriceToBookValid = function(){
+		return $scope.quote.priceToBook  <= 1.5 ? true : false;
+	};
+
+	//10 yrs of positive income = one point
+	$scope.isNetIncomeValid = function(){
+		return $scope.ratios.netincome === 10 ? true : false;
+	};
+
+	//10 yrs of dividends = one point
+	$scope.isDividendTotalValid = function(){
+		return $scope.ratios.dividendTotal === 10 ? true : false;
+	};
+
+	//10+ years of earning per share growth over 3%
+	$scope.isRevenueTenYrValid = function(){
+		return $scope.ratios.revenuetenyr >= 3.0 ? true : false;
+	};
 
 	$scope.calculatepts = function() {
 		var totalpts = 0;
-
-		//revenue over 500 million = one point
-		if ($scope.isRevenueValid($scope.ratios.revenue)) {
+		
+		if ($scope.isRevenueValid()) {
 			totalpts++;
 		}
 
-		//greater then 2.0 = half pt
-		if ($scope.ratios.currentRatio >= 2.0) {
+		if ($scope.isCurrentRatioValid()) {
 			totalpts = totalpts + 0.5;
 		}
 
-		//greater then 1.0 = half pt
-		if ($scope.ratios.longTermDebtCoverageRatio >= 1.0) {
+		if ($scope.isLongTermDebtCoverageRatioValid()) {
 			totalpts = totalpts + 0.5;
 		}
 
-		//p/e less then 15 = one point
-		if ($scope.quote.PeRatio <= 15) {
+		if ($scope.isPeRatioValid()) {
 			totalpts++;
 		}
 
-		//p/b ratio less then 1.5 = one point
-		if ($scope.quote.priceToBook  <= 1.5) {
+		if ($scope.isPriceToBookValid()) {
 			totalpts++;
 		}
 
-		//10 yrs of positive income = one point
-		if ($scope.ratios.netincome === 10) {
+		if ($scope.isNetIncomeValid()) {
 			totalpts++;
 		}
 
-		//10 yrs of dividends = one point
-		if ($scope.ratios.dividendTotal === 10) {
+		if ($scope.isDividendTotalValid()) {
 			totalpts++;
 		}
 
-		//10+ years of earning per share growth over 3%
-		if ($scope.ratios.revenuetenyr >= 3.0) {
+		if ($scope.isRevenueTenYrValid()) {
 			totalpts++;
 		}
+
 		return totalpts;
 	};
 
@@ -79,6 +110,8 @@ app.controller('WsiCtrl', function($scope, $http){
 		$scope.quote = {};
 		$scope.getStockQuote();
 		$scope.getRatios();
+
+		//previousLookups.push({"company" : $scope.quote.Name, "score" : calculatepts()});
 	};
 
 	$scope.getStockQuote = function() {
@@ -102,7 +135,6 @@ app.controller('WsiCtrl', function($scope, $http){
 				$scope.ratios.dividend = data.data.Dividends.Recent.TTM;
 				$scope.ratios.quick = data.data.QuickRatio.Recent["Latest Qtr"];
 				$scope.ratios.revenue = data.data.Revenue.Recent.TTM;
-				//console.log(data.data.WorkingCapital.Historical);
 
 				var workingCapital = data.data.WorkingCapital.Historical[Object.keys(data.data.WorkingCapital.Historical)[Object.keys(data.data.WorkingCapital.Historical).length - 1]];
 
@@ -110,8 +142,7 @@ app.controller('WsiCtrl', function($scope, $http){
 				var currentAssets = data.data.TotalCurrentAssets.Recent["Latest Qtr"];
 				var currentLiabilities = data.data.TotalCurrentLiabilities.Recent["Latest Qtr"];
 				$scope.ratios.longTermDebtCoverageRatio = (currentAssets-currentLiabilities)/longTermDebt;
-				//console.log(workingCapital, longTermDebt);
-				//$scope.ratios.longTermToWorking =
+
 				$scope.ratios.revenuetenyr = data.data.RevenueTenYearAverage.Historical[Object.keys(data.data.RevenueTenYearAverage.Historical)[Object.keys(data.data.RevenueTenYearAverage.Historical).length - 1]];
 
 				var divTot = 0;
