@@ -1,0 +1,26 @@
+{
+  "name": "bgcalculator",
+  "homepage": "https://github.com/tydanielson/bgcalculator",
+  "authors": [
+    "Tyler Danielson <tysdanielson@gmail.com>"
+  ],
+  "description": "An investment tool",
+  "main": "index.html",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "angularjs#^1.5.0",
+    "jquery": "^2.2.1",
+    "angular-animate": "^1.5.0",
+    "angular-aria": "^1.5.0",
+    "angular-material": "^1.0.5"
+  }
+}

@@ -21,47 +21,64 @@ var app = angular.module('wsi', ['ngMaterial'])
 
 app.controller('WsiCtrl', function($scope, $http){
 
-	$scope.ben = {
-		marketCap: 1,
-		currentAssets: 1,
-		currentDebt: 1,
-		longTermDebt: 1,
-		workingCapital: 1,
-		yrsPositiveIncome: '',
-		yrsDividend: '',
-		yrsGrowth: '',
-		pe: 1,
-		pb: 1,
-		dividend: 1
-	};
-
 	$scope.ratios = {};
+	$scope.quote = {};
 
-	$scope.calculate = function() {
-		console.log($scope.ben);
+	$scope.isRevenueValid = function(value){
+		return value >= 500 ? true:false;
+	}
+
+	$scope.calculatepts = function() {
+		var totalpts = 0;
+
+		//revenue over 500 million = one point
+		if ($scope.isRevenueValid($scope.ratios.revenue)) {
+			totalpts++;
+		}
+
+		//greater then 2.0 = half pt
+		if ($scope.ratios.currentRatio >= 2.0) {
+			totalpts = totalpts + 0.5;
+		}
+
+		//greater then 1.0 = half pt
+		if ($scope.ratios.longTermDebtCoverageRatio >= 1.0) {
+			totalpts = totalpts + 0.5;
+		}
+
+		//p/e less then 15 = one point
+		if ($scope.quote.PeRatio <= 15) {
+			totalpts++;
+		}
+
+		//p/b ratio less then 1.5 = one point
+		if ($scope.quote.priceToBook  <= 1.5) {
+			totalpts++;
+		}
+
+		//10 yrs of positive income = one point
+		if ($scope.ratios.netincome === 10) {
+			totalpts++;
+		}
+
+		//10 yrs of dividends = one point
+		if ($scope.ratios.dividendTotal === 10) {
+			totalpts++;
+		}
+
+		//10+ years of earning per share growth over 3%
+		if ($scope.ratios.revenuetenyr >= 3.0) {
+			totalpts++;
+		}
+		return totalpts;
 	};
 
 	$scope.getCompanyData = function() {
 		//clear out the existing values
 		$scope.ratios = {};
 		$scope.quote = {};
-		$scope.balance = {};
-		//$scope.getBalanceSheet();
-		//$scope.getStockQuote();
+		$scope.getStockQuote();
 		$scope.getRatios();
-	};
-
-	$scope.getBalanceSheet = function() {
-		var url = 'https://services.last10k.com/v1/company/' + $scope.ben.ticker + '/balancesheet?formType=10-K&filingOrder=0';
-		$http.get(url)			
-			.then(function(data){
-				console.log("balance", data);
-				$scope.balance = data.data;
-				var bal = data.data.Data;
-				$scope.balance.longTermDebtCoverageRatio = (bal.AssetsCurrent - bal.LiabilitiesCurrent) / bal.LongTermDebtNoncurrent;
-			}, function(data){
-				alert('error');
-			});
 	};
 
 	$scope.getStockQuote = function() {
@@ -70,6 +87,7 @@ app.controller('WsiCtrl', function($scope, $http){
 			.then(function(data){
 				console.log("quote", data);
 				$scope.quote = data.data;
+				$scope.quote.priceToBook = $scope.quote.LastTradePrice/$scope.quote.BookValue;
 			}, function(data){
 				alert('error');
 			});
@@ -83,13 +101,36 @@ app.controller('WsiCtrl', function($scope, $http){
 				$scope.ratios.currentRatio = data.data.CurrentRatio.Recent["Latest Qtr"];
 				$scope.ratios.dividend = data.data.Dividends.Recent.TTM;
 				$scope.ratios.quick = data.data.QuickRatio.Recent["Latest Qtr"];
+				$scope.ratios.revenue = data.data.Revenue.Recent.TTM;
 				//console.log(data.data.WorkingCapital.Historical);
 
 				var workingCapital = data.data.WorkingCapital.Historical[Object.keys(data.data.WorkingCapital.Historical)[Object.keys(data.data.WorkingCapital.Historical).length - 1]];
+
 				var longTermDebt = data.data.LongTermDebt.Recent["Latest Qtr"];
+				var currentAssets = data.data.TotalCurrentAssets.Recent["Latest Qtr"];
+				var currentLiabilities = data.data.TotalCurrentLiabilities.Recent["Latest Qtr"];
+				$scope.ratios.longTermDebtCoverageRatio = (currentAssets-currentLiabilities)/longTermDebt;
 				//console.log(workingCapital, longTermDebt);
 				//$scope.ratios.longTermToWorking =
 				$scope.ratios.revenuetenyr = data.data.RevenueTenYearAverage.Historical[Object.keys(data.data.RevenueTenYearAverage.Historical)[Object.keys(data.data.RevenueTenYearAverage.Historical).length - 1]];
+
+				var divTot = 0;
+				angular.forEach(data.data.Dividends.Historical, function(key, value) {
+					if (key > 0){
+						divTot++;
+					}
+				});
+				$scope.ratios.dividendTotal = divTot;
+
+				var netTot = 0;
+				angular.forEach(data.data.NetIncome.Historical, function(key, value) {
+					if (key > 0){
+						netTot++;
+					}
+				});
+				$scope.ratios.netincome = netTot;
+ 
+
 			}, function(data){
 				alert('error');
 			});
