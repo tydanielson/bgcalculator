@@ -19,12 +19,12 @@ var app = angular.module('wsi', ['ngMaterial'])
 
 });
 
-app.controller('WsiCtrl', function($scope, $http){
+app.controller('WsiCtrl', function($scope, $http, $q){
 
 	$scope.ratios = {};
 	$scope.quote = {};
 
-	$scope.previousLookups = [];
+	$scope.history = [];
 
 	//revenue over 500 million = one point
 	$scope.isRevenueValid = function(){
@@ -67,7 +67,7 @@ app.controller('WsiCtrl', function($scope, $http){
 	};
 
 	$scope.calculatepts = function() {
-		return $(function(resolve, reject) { 
+		return $q(function(resolve, reject) { 
 
 			var totalpts = 0;
 			
@@ -102,24 +102,33 @@ app.controller('WsiCtrl', function($scope, $http){
 			if ($scope.isRevenueTenYrValid()) {
 				totalpts++;
 			}
-
+			console.log('got total', totalpts);
 			resolve(totalpts);
-		})
+		});
 	};
 
 	$scope.getCompanyData = function() {
 		//clear out the existing values
 		$scope.ratios = {};
 		$scope.quote = {};
-		$scope.getStockQuote();
-		$scope.getRatios();
+		var qpromise = $scope.getStockQuote();
+		var rpromise = $scope.getRatios();
 
-		//maybe add busy here...
-		// var promise = calculatepts
-		// $scope.previousLookups.push({"company" : $scope.quote.Name, "score" : $scope.points});
+		$q.all([
+				qpromise, 
+				rpromise
+			])
+			.then(function(data) {
+				var tpromise = $scope.calculatepts();
+				tpromise.then(function(totalpts){
+					$scope.totalpts = totalpts;
+					$scope.history.push({"company" : $scope.quote.Name, "score" : totalpts});
+				});
+			});
 	}; 
 
 	$scope.getStockQuote = function() {
+		var defer = $q.defer();
 		var url = 'https://services.last10k.com/v1/company/' + $scope.ben.ticker + '/quote'
 		$http.get(url)			
 			.then(function(data){
@@ -127,12 +136,16 @@ app.controller('WsiCtrl', function($scope, $http){
 				$scope.quote = data.data;
 				$scope.quote.priceToBook = $scope.quote.LastTradePrice/$scope.quote.BookValue;
 				//$scope.previousLookups.push({"company" : $scope.quote.Name, "score" : $scope.points});
+				defer.resolve();
 			}, function(data){
-				alert('error');
+				def.reject("Failed to get quote");
+				alert('Please wait... too many API calls.');
 			});
+		return defer.promise;
 	};
 
 	$scope.getRatios = function() {
+		var defer = $q.defer();
 		var url = 'https://services.last10k.com/v1/company/' + $scope.ben.ticker + '/ratios'
 		$http.get(url)			
 			.then(function(data){
@@ -166,11 +179,12 @@ app.controller('WsiCtrl', function($scope, $http){
 					}
 				});
 				$scope.ratios.netincome = netTot;
- 
-
+ 				defer.resolve();
 			}, function(data){
-				alert('error');
+				alert('Please wait... too many API calls.');
+				def.reject("Failed to get ratios");
 			});
+		return defer.promise;
 	};
 
 });

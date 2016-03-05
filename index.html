@@ -151,16 +151,19 @@
     </sub>
 
     <div layout="row">
-        Total Points = {{calculatepts()}}
+        Total Points = {{totalpts}}
     </div>
 
     <div layout="row">
         <hr width="100%" />
     </div>
     
-    <div layout="row" ng-show="previousLookups.length > 0">
+    <div layout="row" ng-show="history.length > 0">
         <div layout="column">
-            {{previousLookups}}
+            <h3>History - alpha</h3>
+            <div ng-repeat="each in history">   
+                {{each.company}} - {{each.score}} / 7
+            </div>
         </div>
     </div>
 
