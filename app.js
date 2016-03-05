@@ -67,41 +67,44 @@ app.controller('WsiCtrl', function($scope, $http){
 	};
 
 	$scope.calculatepts = function() {
-		var totalpts = 0;
-		
-		if ($scope.isRevenueValid()) {
-			totalpts++;
-		}
+		return $(function(resolve, reject) { 
 
-		if ($scope.isCurrentRatioValid()) {
-			totalpts = totalpts + 0.5;
-		}
+			var totalpts = 0;
+			
+			if ($scope.isRevenueValid()) {
+				totalpts++;
+			}
 
-		if ($scope.isLongTermDebtCoverageRatioValid()) {
-			totalpts = totalpts + 0.5;
-		}
+			if ($scope.isCurrentRatioValid()) {
+				totalpts = totalpts + 0.5;
+			}
 
-		if ($scope.isPeRatioValid()) {
-			totalpts++;
-		}
+			if ($scope.isLongTermDebtCoverageRatioValid()) {
+				totalpts = totalpts + 0.5;
+			}
 
-		if ($scope.isPriceToBookValid()) {
-			totalpts++;
-		}
+			if ($scope.isPeRatioValid()) {
+				totalpts++;
+			}
 
-		if ($scope.isNetIncomeValid()) {
-			totalpts++;
-		}
+			if ($scope.isPriceToBookValid()) {
+				totalpts++;
+			}
 
-		if ($scope.isDividendTotalValid()) {
-			totalpts++;
-		}
+			if ($scope.isNetIncomeValid()) {
+				totalpts++;
+			}
 
-		if ($scope.isRevenueTenYrValid()) {
-			totalpts++;
-		}
+			if ($scope.isDividendTotalValid()) {
+				totalpts++;
+			}
 
-		return totalpts;
+			if ($scope.isRevenueTenYrValid()) {
+				totalpts++;
+			}
+
+			resolve(totalpts);
+		})
 	};
 
 	$scope.getCompanyData = function() {
@@ -111,8 +114,10 @@ app.controller('WsiCtrl', function($scope, $http){
 		$scope.getStockQuote();
 		$scope.getRatios();
 
-		//previousLookups.push({"company" : $scope.quote.Name, "score" : calculatepts()});
-	};
+		//maybe add busy here...
+		// var promise = calculatepts
+		// $scope.previousLookups.push({"company" : $scope.quote.Name, "score" : $scope.points});
+	}; 
 
 	$scope.getStockQuote = function() {
 		var url = 'https://services.last10k.com/v1/company/' + $scope.ben.ticker + '/quote'
@@ -121,6 +126,7 @@ app.controller('WsiCtrl', function($scope, $http){
 				console.log("quote", data);
 				$scope.quote = data.data;
 				$scope.quote.priceToBook = $scope.quote.LastTradePrice/$scope.quote.BookValue;
+				//$scope.previousLookups.push({"company" : $scope.quote.Name, "score" : $scope.points});
 			}, function(data){
 				alert('error');
 			});
