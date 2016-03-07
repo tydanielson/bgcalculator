@@ -22,29 +22,27 @@
 
 <md-content class="md-padding" ng-controller="WsiCtrl">
 
-<h1>WSI Stock Selector</h1>
-<h2>A Calulator of sorts</h2>
+<h1 style="font-size: 20px;">WSI Stock Research Tool</h1>
 <div layout="column">
-    <div layout="row">
-        <ng-form name="benForm">
+    <ng-form layout layout-align="center" name="benForm">
+        <div layout="row" flex>
+            
             <md-input-container>
               <label>Stock Ticker</label>
               <input type="text" ng-model="ben.ticker" name="ticker" required>
             </md-input-container>
-        </ng-form>
-    </div>
-
-    <div layout="row">
-        <md-button class="md-raised md-primary" ng-click="getCompanyData()" ng-disabled="benForm.ticker.$invalid">Get Ticker Data</md-button>
-    </div>
-    
+            <div>
+                <md-button class="md-raised md-primary" ng-click="getCompanyData()" ng-disabled="benForm.ticker.$invalid">Go</md-button>
+            </div>
+        </div>
+    </ng-form>
 
     <div layout="row">
         <div layout="column" flex="50">
             {{quote.Name}} 
         </div>
         <div layout="column" flex="50">
-            {{quote.LastTradePrice | currency}}
+            {{quote.LastTradePrice | currency}} 
         </div>
     </div>
 
@@ -57,16 +55,16 @@
             Market Cap
         </div>
         <div layout="column" flex="50">
-            {{quote.MarketCapitalization}}
+            {{quote.MarketCapitalization}} 
         </div>
     </div>
 
     <div layout="row">
         <div layout="column" flex="50">
-            Annual Revenue (M)
+            Annual Revenue
         </div>
         <div layout="column" flex="50" ng-class="{'valid':isRevenueValid(), 'invalid':!isRevenueValid()}">
-            {{ratios.revenue*100000 | currency:"$":0}}
+            {{ratios.revenue*100000 | currency:"$":0}} > 500M
         </div>
     </div>
 
@@ -75,16 +73,16 @@
             Current Ratio*
         </div>
         <div layout="column" flex="50" ng-class="{'valid':isCurrentRatioValid(), 'invalid':!isCurrentRatioValid()}">
-            {{ratios.currentRatio}}
+            {{ratios.currentRatio}} > 2.0
         </div>
     </div>
 
     <div layout="row">
         <div layout="column" flex="50">
-            Long-term Debt Coverage Ratio*
+            Lt-Debt Coverage Ratio*
         </div>
         <div layout="column" flex="50" ng-class="{'valid':isLongTermDebtCoverageRatioValid(), 'invalid':!isLongTermDebtCoverageRatioValid()}">
-            {{ratios.longTermDebtCoverageRatio | number:2}}
+            {{ratios.longTermDebtCoverageRatio | number:2}} > 1.0
         </div>
     </div>
 
@@ -93,7 +91,7 @@
             P/E
         </div>
         <div layout="column" flex="50" ng-class="{'valid':isPeRatioValid(), 'invalid':!isPeRatioValid()}">
-            {{quote.PeRatio}}
+            {{quote.PeRatio}} < 15
         </div>
     </div>
 
@@ -102,7 +100,7 @@
             Book Value/Share
         </div>
         <div layout="column" flex="50" ng-class="{'valid':isPriceToBookValid(), 'invalid':!isPriceToBookValid()}">
-            {{quote.priceToBook | number:2}}
+            {{quote.priceToBook | number:2}} < 1.5
         </div>
     </div>
 
@@ -111,7 +109,7 @@
             Years of dividend
         </div>
         <div layout="column" flex="50" ng-class="{'valid':isDividendTotalValid(), 'invalid':!isDividendTotalValid()}">
-            {{ratios.dividendTotal}}
+            {{ratios.dividendTotal}} = 10yrs+
         </div>
     </div>
 <!-- 
@@ -129,7 +127,7 @@
             10yr. Average Revenue
         </div>
         <div layout="column" flex="50" ng-class="{'valid':isRevenueTenYrValid(), 'invalid':!isRevenueTenYrValid()}">
-            {{ratios.revenuetenyr}}
+            {{ratios.revenuetenyr}} > 3.0
         </div>
     </div>
 
@@ -138,7 +136,7 @@
             Years of positive income
         </div>
         <div layout="column" flex="50" ng-class="{'valid':isNetIncomeValid(), 'invalid':!isNetIncomeValid()}">
-            {{ratios.netincome}}
+            {{ratios.netincome}} = 10yrs+
         </div>
     </div>
 
