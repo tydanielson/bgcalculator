@@ -64,7 +64,7 @@
             Annual Revenue
         </div>
         <div layout="column" flex="50" ng-class="{'valid':isRevenueValid(), 'invalid':!isRevenueValid()}">
-            {{ratios.revenue*100000 | currency:"$":0}} > 500M
+            {{ratios.revenue*10000 | currency:"$":0}} > 500M
         </div>
     </div>
 
@@ -124,7 +124,7 @@
 
     <div layout="row">
         <div layout="column" flex="50">
-            10yr. Average Revenue
+            10yr. Avg. Revenue Growth %
         </div>
         <div layout="column" flex="50" ng-class="{'valid':isRevenueTenYrValid(), 'invalid':!isRevenueTenYrValid()}">
             {{ratios.revenuetenyr}} > 3.0
