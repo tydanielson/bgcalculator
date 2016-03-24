@@ -162,7 +162,22 @@ app.controller('WsiCtrl', function($scope, $http, $q){
 				var currentLiabilities = data.data.TotalCurrentLiabilities.Recent["Latest Qtr"];
 				$scope.ratios.longTermDebtCoverageRatio = (currentAssets-currentLiabilities)/longTermDebt;
 
-				$scope.ratios.revenuetenyr = data.data.RevenueTenYearAverage.Historical[Object.keys(data.data.RevenueTenYearAverage.Historical)[Object.keys(data.data.RevenueTenYearAverage.Historical).length - 1]];
+				
+
+				var ntarr = $.map(data.data.NetIncome.Historical, function(value, index) {
+				    return [value];
+				});
+				//net income eldest 3 years
+				var ntfirst3avg = (ntarr[0] + ntarr[1] + ntarr[2]) / 3;
+				//net income newest 3 years
+				var ntlast3avg = (ntarr[7] + ntarr[8] + ntarr[9]) / 3;
+				console.log(ntfirst3avg, ntlast3avg);
+				var ntrevavg = (Math.pow(ntlast3avg/ntfirst3avg, 0.1) - 1) * 100;
+				console.log(ntrevavg); 
+				$scope.ratios.revenuetenyr = ntrevavg;
+
+				//divide old/new -1 * 100
+				//$scope.ratios.revenuetenyr = data.data.RevenueTenYearAverage.Historical[Object.keys(data.data.RevenueTenYearAverage.Historical)[Object.keys(data.data.RevenueTenYearAverage.Historical).length - 1]];
 
 				var divTot = 0;
 				angular.forEach(data.data.Dividends.Historical, function(key, value) {

@@ -127,7 +127,7 @@
             10yr. Avg. Revenue Growth %
         </div>
         <div layout="column" flex="50" ng-class="{'valid':isRevenueTenYrValid(), 'invalid':!isRevenueTenYrValid()}">
-            {{ratios.revenuetenyr}} > 3.0
+            {{ratios.revenuetenyr | number:2}} > 3.0
         </div>
     </div>
 
