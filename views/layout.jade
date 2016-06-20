@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    title= title
+    link( rel='stylesheet', href='https://fonts.googleapis.com/icon?family=Material+Icons')
+    link(rel='stylesheet', href='bower_components/angular-material/angular-material.min.css')
+    link(rel='stylesheet', href='/css/style.css')
+  body(ng-app='app', layout="column", layout-padding)
+    block content
+    script(src='bower_components/jquery/dist/jquery.min.js')
+    script(src='bower_components/angular/angular.min.js')
+    script(src='bower_components/angular-aria/angular-aria.min.js')
+    script(src='bower_components/angular-animate/angular-animate.min.js')
+    script(src='bower_components/angular-messages/angular-messages.min.js')
+    script(src='bower_components/angular-ui-router/release/angular-ui-router.min.js')
+    script(src='bower_components/angular-material/angular-material.min.js')
+
+    script(src='js/app.js')
+    script(src='js/main-controller.js')
