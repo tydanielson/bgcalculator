@@ -1,206 +1,88 @@
-(function(){
+var express = require('express');
+var path = require('path');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var cors = require('cors');
+var redis = require('redis');
+var client = redis.createClient();
+var ejs = require('ejs');
+//var mongo = require('mongodb');
+//var mongoose = require('mongoose');
+//mongoose.connect('mongodb://localhost:27017/bpf-omega-api');
 
-var app = angular.module('wsi', ['ngMaterial'])
-    .config(function($mdThemingProvider, $httpProvider) {
-        $mdThemingProvider.theme('default')
-            .primaryPalette('green')
-            .accentPalette('blue');
-
-		$httpProvider.defaults.headers.common = {};
-		$httpProvider.defaults.headers.post = {};
-		$httpProvider.defaults.headers.put = {};
-		$httpProvider.defaults.headers.patch = {};
-		$httpProvider.defaults.headers.common["Content-Type"] = "text/plain";
- 		$httpProvider.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
- 		$httpProvider.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS';
-		$httpProvider.defaults.headers.common['Ocp-Apim-Subscription-Key'] = '5053da1874224fb1a0de3c4cd5f51a60';
-		$httpProvider.defaults.useXDomain = true;
-		delete $httpProvider.defaults.headers.common['X-Requested-With'];
-
+//var db = mongoose.connection;
+//db.on('error', console.error.bind(console, 'connection error:'));
+//db.once('open', function () {
+  // we're connected!
+//  console.log('database connected');
+//});
+client.on('connect', function() {
+    console.log('connected to redis');
 });
 
-app.controller('WsiCtrl', function($scope, $http, $q){
+var stocks = require('./routes/stock');
+//var quote = require('./routes/quote');
+var help = require('./routes/help');
 
-	$scope.ratios = {};
-	$scope.quote = {};
+var app = express();
 
-	$scope.history = [];
+// view engine setup
+app.set('view engine', 'ejs');
+app.engine('.html', require('ejs').renderFile);
+//app.set('views', path.join(__dirname, 'views'));
+//app.set('view engine', 'jade');
 
-	//revenue over 500 million = one point
-	$scope.isRevenueValid = function(){
-		return $scope.ratios.revenue >= 500 ? true : false;
-	};
+// uncomment after placing your favicon in /public
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-	//greater then 2.0 = half pt
-	$scope.isCurrentRatioValid = function(){
-		return $scope.ratios.currentRatio >= 2.0 ? true : false;
-	};
-
-	//greater then 1.0 = half pt
-	$scope.isLongTermDebtCoverageRatioValid = function(){
-		return $scope.ratios.longTermDebtCoverageRatio >= 1.0 ? true : false;
-	};
-
-	//p/e less then 15 = one point
-	$scope.isPeRatioValid = function(){
-		return $scope.quote.PeRatio <= 15 ? true : false;
-	};
-
-	//p/b ratio less then 1.5 = one point
-	$scope.isPriceToBookValid = function(){
-		return $scope.quote.priceToBook  <= 1.5 ? true : false;
-	};
-
-	//10 yrs of positive income = one point
-	$scope.isNetIncomeValid = function(){
-		return $scope.ratios.netincome === 10 ? true : false;
-	};
-
-	//10 yrs of dividends = one point
-	$scope.isDividendTotalValid = function(){
-		return $scope.ratios.dividendTotal === 10 ? true : false;
-	};
-
-	//10+ years of earning per share growth over 3%
-	$scope.isRevenueTenYrValid = function(){
-		return $scope.ratios.revenuetenyr >= 3.0 ? true : false;
-	};
-
-	$scope.calculatepts = function() {
-		return $q(function(resolve, reject) { 
-
-			var totalpts = 0;
-			
-			if ($scope.isRevenueValid()) {
-				totalpts++;
-			}
-
-			if ($scope.isCurrentRatioValid()) {
-				totalpts = totalpts + 0.5;
-			}
-
-			if ($scope.isLongTermDebtCoverageRatioValid()) {
-				totalpts = totalpts + 0.5;
-			}
-
-			if ($scope.isPeRatioValid()) {
-				totalpts++;
-			}
-
-			if ($scope.isPriceToBookValid()) {
-				totalpts++;
-			}
-
-			if ($scope.isNetIncomeValid()) {
-				totalpts++;
-			}
-
-			if ($scope.isDividendTotalValid()) {
-				totalpts++;
-			}
-
-			if ($scope.isRevenueTenYrValid()) {
-				totalpts++;
-			}
-			console.log('got total', totalpts);
-			resolve(totalpts);
-		});
-	};
-
-	$scope.getCompanyData = function() {
-		//clear out the existing values
-		$scope.ratios = {};
-		$scope.quote = {};
-		var qpromise = $scope.getStockQuote();
-		var rpromise = $scope.getRatios();
-
-		$q.all([
-				qpromise, 
-				rpromise
-			])
-			.then(function(data) {
-				var tpromise = $scope.calculatepts();
-				tpromise.then(function(totalpts){
-					$scope.totalpts = totalpts;
-					$scope.history.push({"company" : $scope.quote.Name, "score" : totalpts});
-				});
-			});
-	}; 
-
-	$scope.getStockQuote = function() {
-		var defer = $q.defer();
-		var url = 'https://services.last10k.com/v1/company/' + $scope.ben.ticker + '/quote'
-		$http.get(url)			
-			.then(function(data){
-				console.log("quote", data);
-				$scope.quote = data.data;
-				$scope.quote.priceToBook = $scope.quote.LastTradePrice/$scope.quote.BookValue;
-				//$scope.previousLookups.push({"company" : $scope.quote.Name, "score" : $scope.points});
-				defer.resolve();
-			}, function(data){
-				def.reject("Failed to get quote");
-				alert('Please wait... too many API calls.');
-			});
-		return defer.promise;
-	};
-
-	$scope.getRatios = function() {
-		var defer = $q.defer();
-		var url = 'https://services.last10k.com/v1/company/' + $scope.ben.ticker + '/ratios'
-		$http.get(url)			
-			.then(function(data){
-				console.log("ratios", data);
-				$scope.ratios.currentRatio = data.data.CurrentRatio.Recent["Latest Qtr"];
-				$scope.ratios.dividend = data.data.Dividends.Recent.TTM;
-				$scope.ratios.quick = data.data.QuickRatio.Recent["Latest Qtr"];
-				$scope.ratios.revenue = data.data.Revenue.Recent.TTM;
-
-				var workingCapital = data.data.WorkingCapital.Historical[Object.keys(data.data.WorkingCapital.Historical)[Object.keys(data.data.WorkingCapital.Historical).length - 1]];
-
-				var longTermDebt = data.data.LongTermDebt.Recent["Latest Qtr"];
-				var currentAssets = data.data.TotalCurrentAssets.Recent["Latest Qtr"];
-				var currentLiabilities = data.data.TotalCurrentLiabilities.Recent["Latest Qtr"];
-				$scope.ratios.longTermDebtCoverageRatio = (currentAssets-currentLiabilities)/longTermDebt;
-
-				
-
-				var ntarr = $.map(data.data.NetIncome.Historical, function(value, index) {
-				    return [value];
-				});
-				//net income eldest 3 years
-				var ntfirst3avg = (ntarr[0] + ntarr[1] + ntarr[2]) / 3;
-				//net income newest 3 years
-				var ntlast3avg = (ntarr[7] + ntarr[8] + ntarr[9]) / 3;
-				console.log(ntfirst3avg, ntlast3avg);
-				var ntrevavg = (Math.pow(ntlast3avg/ntfirst3avg, 0.1) - 1) * 100;
-				console.log(ntrevavg); 
-				$scope.ratios.revenuetenyr = ntrevavg;
-
-				//divide old/new -1 * 100
-				//$scope.ratios.revenuetenyr = data.data.RevenueTenYearAverage.Historical[Object.keys(data.data.RevenueTenYearAverage.Historical)[Object.keys(data.data.RevenueTenYearAverage.Historical).length - 1]];
-
-				var divTot = 0;
-				angular.forEach(data.data.Dividends.Historical, function(key, value) {
-					if (key > 0){
-						divTot++;
-					}
-				});
-				$scope.ratios.dividendTotal = divTot;
-
-				var netTot = 0;
-				angular.forEach(data.data.NetIncome.Historical, function(key, value) {
-					if (key > 0){
-						netTot++;
-					}
-				});
-				$scope.ratios.netincome = netTot;
- 				defer.resolve();
-			}, function(data){
-				alert('Please wait... too many API calls.');
-				def.reject("Failed to get ratios");
-			});
-		return defer.promise;
-	};
-
+// Make our db accessible to our router
+app.use(function(req,res,next){
+    //req.db = db;
+    next();
 });
-})();
+
+app.use('/stock', stocks);
+//app.use('/quote', quote);
+app.use('/', help);
+app.use(cors());
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error.html', {
+      message: err.message,
+      error: err
+    });
+  });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error.html', {
+    message: err.message,
+    error: {}
+  });
+});
+
+
+module.exports = app;
