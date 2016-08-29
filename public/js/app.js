@@ -102,7 +102,7 @@ app.controller('WsiCtrl', function($scope, $http, $q){
 			if ($scope.isRevenueTenYrValid()) {
 				totalpts++;
 			}
-			console.log('got total', totalpts);
+			//console.log('got total', totalpts);
 			resolve(totalpts);
 		});
 	};
@@ -129,77 +129,127 @@ app.controller('WsiCtrl', function($scope, $http, $q){
 
 	$scope.getStockQuote = function() {
 		var defer = $q.defer();
-		var url = 'https://services.last10k.com/v1/company/' + $scope.ben.ticker + '/quote'
-		$http.get(url)			
-			.then(function(data){
-				console.log("quote", data);
-				$scope.quote = data.data;
-				$scope.quote.priceToBook = $scope.quote.LastTradePrice/$scope.quote.BookValue;
-				//$scope.previousLookups.push({"company" : $scope.quote.Name, "score" : $scope.points});
-				defer.resolve();
-			}, function(data){
-				def.reject("Failed to get quote");
-				alert('Please wait... too many API calls.');
+
+		$http.get('/stock/quote/' + $scope.ben.ticker)
+			.then(function(res){
+				//console.log(res.data);
+				if (res.data.quote === null) {
+					var url = 'https://services.last10k.com/v1/company/' + $scope.ben.ticker + '/quote'
+					$http.get(url)			
+						.then(function(data){
+							//console.log("quote", data);
+							$scope.quote = data.data;
+							$scope.quote.priceToBook = $scope.quote.LastTradePrice/$scope.quote.BookValue;
+							//$scope.previousLookups.push({"company" : $scope.quote.Name, "score" : $scope.points});
+							$http({
+								url: '/stock/quote/' + $scope.ben.ticker, 
+								data: {"quote": $scope.quote},
+								method: "POST",
+								headers: {
+									'Content-Type': 'application/json'
+								}})
+								.then(function(data){
+									//console.debug('data posted');
+								});
+
+							defer.resolve();
+						}, function(data){
+							def.reject("Failed to get quote");
+							alert('Please wait... too many API calls.');
+						});
+				} else {
+					$scope.quote = JSON.parse(res.data.quote);
+					defer.resolve();
+				}
 			});
+
 		return defer.promise;
 	};
 
 	$scope.getRatios = function() {
 		var defer = $q.defer();
-		var url = 'https://services.last10k.com/v1/company/' + $scope.ben.ticker + '/ratios'
-		$http.get(url)			
-			.then(function(data){
-				console.log("ratios", data);
-				$scope.ratios.currentRatio = data.data.CurrentRatio.Recent["Latest Qtr"];
-				$scope.ratios.dividend = data.data.Dividends.Recent.TTM;
-				$scope.ratios.quick = data.data.QuickRatio.Recent["Latest Qtr"];
-				$scope.ratios.revenue = data.data.Revenue.Recent.TTM;
+		$http.get('/stock/ratio/' + $scope.ben.ticker)
+			.then(function(res){
+				if(res.data.stock === null){
+					var url = 'https://services.last10k.com/v1/company/' + $scope.ben.ticker + '/ratios'
+					$http.get(url)			
+						.then(function (data) {
+							//console.debug("ratios", data);
+							$scope.setRatioData(data);
+							defer.resolve();
 
-				var workingCapital = data.data.WorkingCapital.Historical[Object.keys(data.data.WorkingCapital.Historical)[Object.keys(data.data.WorkingCapital.Historical).length - 1]];
-
-				var longTermDebt = data.data.LongTermDebt.Recent["Latest Qtr"];
-				var currentAssets = data.data.TotalCurrentAssets.Recent["Latest Qtr"];
-				var currentLiabilities = data.data.TotalCurrentLiabilities.Recent["Latest Qtr"];
-				$scope.ratios.longTermDebtCoverageRatio = (currentAssets-currentLiabilities)/longTermDebt;
-
-				
-
-				var ntarr = $.map(data.data.NetIncome.Historical, function(value, index) {
-				    return [value];
-				});
-				//net income eldest 3 years
-				var ntfirst3avg = (ntarr[0] + ntarr[1] + ntarr[2]) / 3;
-				//net income newest 3 years
-				var ntlast3avg = (ntarr[7] + ntarr[8] + ntarr[9]) / 3;
-				console.log(ntfirst3avg, ntlast3avg);
-				var ntrevavg = (Math.pow(ntlast3avg/ntfirst3avg, 0.1) - 1) * 100;
-				console.log(ntrevavg); 
-				$scope.ratios.revenuetenyr = ntrevavg;
-
-				//divide old/new -1 * 100
-				//$scope.ratios.revenuetenyr = data.data.RevenueTenYearAverage.Historical[Object.keys(data.data.RevenueTenYearAverage.Historical)[Object.keys(data.data.RevenueTenYearAverage.Historical).length - 1]];
-
-				var divTot = 0;
-				angular.forEach(data.data.Dividends.Historical, function(key, value) {
-					if (key > 0){
-						divTot++;
-					}
-				});
-				$scope.ratios.dividendTotal = divTot;
-
-				var netTot = 0;
-				angular.forEach(data.data.NetIncome.Historical, function(key, value) {
-					if (key > 0){
-						netTot++;
-					}
-				});
-				$scope.ratios.netincome = netTot;
- 				defer.resolve();
-			}, function(data){
-				alert('Please wait... too many API calls.');
-				def.reject("Failed to get ratios");
-			});
+						}, function(data){
+							alert('Please wait... too many API calls.');
+							def.reject("Failed to get ratios");
+						});
+					
+				} else {
+					//set the ratio data here
+					$scope.ratios = JSON.parse(res.data.stock);
+					defer.resolve();
+				}
+		});
 		return defer.promise;
+	};
+
+	$scope.setRatioData = function(data) {
+		$scope.ratios.currentRatio = data.data.CurrentRatio.Recent["Latest Qtr"];
+		$scope.ratios.dividend = data.data.Dividends.Recent.TTM;
+		$scope.ratios.quick = data.data.QuickRatio.Recent["Latest Qtr"];
+		$scope.ratios.revenue = data.data.Revenue.Recent.TTM;
+
+		var workingCapital = data.data.WorkingCapital.Historical[Object.keys(data.data.WorkingCapital.Historical)[Object.keys(data.data.WorkingCapital.Historical).length - 1]];
+
+		var longTermDebt = data.data.LongTermDebt.Recent["Latest Qtr"];
+		var currentAssets = data.data.TotalCurrentAssets.Recent["Latest Qtr"];
+		var currentLiabilities = data.data.TotalCurrentLiabilities.Recent["Latest Qtr"];
+		$scope.ratios.longTermDebtCoverageRatio = (currentAssets-currentLiabilities)/longTermDebt;
+
+		
+
+		var ntarr = $.map(data.data.NetIncome.Historical, function(value, index) {
+		    return [value];
+		});
+		//net income eldest 3 years
+		var ntfirst3avg = (ntarr[0] + ntarr[1] + ntarr[2]) / 3;
+		//net income newest 3 years
+		var ntlast3avg = (ntarr[7] + ntarr[8] + ntarr[9]) / 3;
+		//console.log(ntfirst3avg, ntlast3avg);
+		var ntrevavg = (Math.pow(ntlast3avg/ntfirst3avg, 0.1) - 1) * 100;
+		//console.log(ntrevavg); 
+		$scope.ratios.revenuetenyr = ntrevavg;
+
+		//divide old/new -1 * 100
+		//$scope.ratios.revenuetenyr = data.data.RevenueTenYearAverage.Historical[Object.keys(data.data.RevenueTenYearAverage.Historical)[Object.keys(data.data.RevenueTenYearAverage.Historical).length - 1]];
+
+		var divTot = 0;
+		angular.forEach(data.data.Dividends.Historical, function(key, value) {
+			if (key > 0){
+				divTot++;
+			}
+		});
+		$scope.ratios.dividendTotal = divTot;
+
+		var netTot = 0;
+		angular.forEach(data.data.NetIncome.Historical, function(key, value) {
+			if (key > 0){
+				netTot++;
+			}
+		});
+		$scope.ratios.netincome = netTot;
+
+		//save the data 
+		$http({
+			url: '/stock/ratio/' + $scope.ben.ticker, 
+			data: {"ratios": $scope.ratios},
+			method: "POST",
+			headers: {
+				'Content-Type': 'application/json'
+			}})
+			.then(function(data){
+				//console.debug('data posted');
+			});
+			
 	};
 
 });
