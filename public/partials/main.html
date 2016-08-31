@@ -1,4 +1,150 @@
-<h1>Cache</h1>
-<md-button class="md-raised" ui-sref="main.admin">Admin</md-button>
-<md-button class="md-raised" ui-sref="main.help">Help</md-button>
-<div ui-view="cache"></div>
+<md-content class="md-padding">
+
+	<h1 style="font-size: 24px; text-align:center;">ValuVesting Calculator</h1>
+
+	<md-card class="md-padding">
+	<div layout="column">
+	    <ng-form layout layout-align="center" name="benForm">
+	        <div layout="row" flex>
+	            
+	            <md-input-container>
+	              <label>Stock Ticker</label>
+	              <input type="text" ng-model="ben.ticker" name="ticker" ng-maxlength="4" required>
+	            </md-input-container>
+	            <div>
+	                <md-button class="md-raised md-primary" ng-click="getCompanyData()" ng-disabled="benForm.ticker.$invalid">Go</md-button>
+	            </div>
+	        </div>
+	    </ng-form>
+
+	    <div layout="row">
+	        <div layout="column" flex="50">
+	            {{quote.Name}} 
+	        </div>
+	        <div layout="column" flex="50">
+	            {{quote.LastTradePrice | currency}} 
+	        </div>
+	    </div>
+
+	    <div layout="row">
+	        <hr width="100%" />
+	    </div>
+
+	    <div layout="row">
+	        <div layout="column" flex="50">
+	            Market Cap
+	        </div>
+	        <div layout="column" flex="50">
+	            {{quote.MarketCapitalization}} 
+	        </div>
+	    </div>
+
+	    <div layout="row">
+	        <div layout="column" flex="50">
+	            Annual Revenue
+	        </div>
+	        <div layout="column" flex="50" ng-class="{'valid':isRevenueValid(), 'invalid':!isRevenueValid()}">
+	            {{ratios.revenue*10000 | currency:"$":0}} > 500M
+	        </div>
+	    </div>
+
+	    <div layout="row">
+	        <div layout="column" flex="50">
+	            Current Ratio*
+	        </div>
+	        <div layout="column" flex="50" ng-class="{'valid':isCurrentRatioValid(), 'invalid':!isCurrentRatioValid()}">
+	            {{ratios.currentRatio}} > 2.0
+	        </div>
+	    </div>
+
+	    <div layout="row">
+	        <div layout="column" flex="50">
+	            Lt-Debt Coverage Ratio*
+	        </div>
+	        <div layout="column" flex="50" ng-class="{'valid':isLongTermDebtCoverageRatioValid(), 'invalid':!isLongTermDebtCoverageRatioValid()}">
+	            {{ratios.longTermDebtCoverageRatio | number:2}} > 1.0
+	        </div>
+	    </div>
+
+	    <div layout="row">
+	        <div layout="column" flex="50">
+	            P/E
+	        </div>
+	        <div layout="column" flex="50" ng-class="{'valid':isPeRatioValid(), 'invalid':!isPeRatioValid()}">
+	            {{quote.PeRatio}} < 15
+	        </div>
+	    </div>
+
+	    <div layout="row">
+	        <div layout="column" flex="50">
+	            Book Value/Share
+	        </div>
+	        <div layout="column" flex="50" ng-class="{'valid':isPriceToBookValid(), 'invalid':!isPriceToBookValid()}">
+	            {{quote.priceToBook | number:2}} < 1.5
+	        </div>
+	    </div>
+
+	    <div layout="row">
+	        <div layout="column" flex="50">
+	            Years of dividend
+	        </div>
+	        <div layout="column" flex="50" ng-class="{'valid':isDividendTotalValid(), 'invalid':!isDividendTotalValid()}">
+	            {{ratios.dividendTotal}} = 10yrs+
+	        </div>
+	    </div>
+	<!-- 
+	    <div layout="row">
+	        <div layout="column" flex="50">
+	            Dividend Annual Total $
+	        </div>
+	        <div layout="column" flex="50">
+	            {{ratios.dividend}}
+	        </div>
+	    </div> -->
+
+	    <div layout="row">
+	        <div layout="column" flex="50">
+	            10yr. Avg. Revenue Growth %
+	        </div>
+	        <div layout="column" flex="50" ng-class="{'valid':isRevenueTenYrValid(), 'invalid':!isRevenueTenYrValid()}">
+	            {{ratios.revenuetenyr | number:2}} > 3.0
+	        </div>
+	    </div>
+
+	    <div layout="row">
+	        <div layout="column" flex="50">
+	            Years of positive income
+	        </div>
+	        <div layout="column" flex="50" ng-class="{'valid':isNetIncomeValid(), 'invalid':!isNetIncomeValid()}">
+	            {{ratios.netincome}} = 10yrs+
+	        </div>
+	    </div>
+
+	    <div layout="row">
+	        <hr width="100%" />
+	    </div>
+
+	    <sub>
+	        *Half point
+	    </sub>
+
+	    <div layout="row">
+	        Total Points = {{totalpts}}
+	    </div>
+
+	    <div layout="row">
+	        <hr width="100%" />
+	    </div>
+	    
+	    <div layout="row" ng-show="history.length > 0">
+	        <div layout="column">
+	            <h3>History - alpha</h3>
+	            <div ng-repeat="each in history">   
+	                {{each.company}} - {{each.score}} / 7
+	            </div>
+	        </div>
+	    </div>
+
+	</div>
+	</md-card>
+</md-content>

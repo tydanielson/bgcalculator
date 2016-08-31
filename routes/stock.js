@@ -15,12 +15,13 @@ router.get('/ratio/:ticker', function (req, res) {
 });
 
 router.post('/ratio/:ticker', function (req, res) {
+    var ticker = req.params.ticker.toUpperCase();
     var json = JSON.stringify(req.body.ratios);
-    client.set(req.params.ticker, json, function(err, reply) {
+    client.set(ticker, json, function(err, reply) {
         console.log(reply);
         res.sendStatus(200);
     });
-    client.expire(req.params.ticker, 2592000);
+    client.expire(ticker, 2592000);
     
 });
 
@@ -33,12 +34,12 @@ router.get('/quote/:ticker', function (req, res) {
 });
 
 router.post('/quote/:ticker', function (req, res) {
-
+    var ticker = req.params.ticker.toUpperCase();
     var json = JSON.stringify(req.body.quote);
-    client.set(req.params.ticker + "-quote", json, function(err, reply) {
+    client.set(ticker + "-quote", json, function(err, reply) {
         res.sendStatus(200);
     });
-    client.expire(req.params.ticker, 86400);
+    client.expire(ticker, 86400);
 });
 
 
