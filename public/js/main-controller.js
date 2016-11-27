@@ -53,17 +53,26 @@
 			return $q(function(resolve, reject) { 
 
 				var totalpts = 0;
+				var outOfPts = 6;
 				
 				if ($scope.isRevenueValid()) {
 					totalpts++;
 				}
 
-				if ($scope.isCurrentRatioValid()) {
-					totalpts = totalpts + 0.5;
+				//sometimes this data is undefined for some stocks
+				if ($scope.ratios.currentRatio !== undefined) {
+					if ($scope.isCurrentRatioValid()) {
+						totalpts = totalpts + 0.5;
+					}
+					outOfPts = outOfPts + 0.5;
 				}
 
-				if ($scope.isLongTermDebtCoverageRatioValid()) {
-					totalpts = totalpts + 0.5;
+				//sometimes this data is null for some stocks
+				if ($scope.ratios.longTermDebtCoverageRatio !== null) {
+					if ($scope.isLongTermDebtCoverageRatioValid()) {
+						totalpts = totalpts + 0.5;
+					}
+					outOfPts = outOfPts + 0.5;
 				}
 
 				if ($scope.isPeRatioValid()) {
@@ -86,7 +95,7 @@
 					totalpts++;
 				}
 				//console.log('got total', totalpts);
-				resolve(totalpts);
+				resolve([totalpts, outOfPts]);
 			});
 		};
 
@@ -103,9 +112,10 @@
 				])
 				.then(function(data) {
 					var tpromise = $scope.calculatepts();
-					tpromise.then(function(totalpts){
-						$scope.totalpts = totalpts;
-						$scope.history.push({"company" : $scope.quote.Name, "score" : totalpts});
+					tpromise.then(function(data){
+						$scope.totalpts = data[0];
+						$scope.outOfPts = data[1];
+						$scope.history.push({"company" : $scope.quote.Name, "score" : data[0], "outOfScore" : data[1]});
 					});
 				});
 		}; 
