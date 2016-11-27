@@ -53,7 +53,12 @@
 	            Current Ratio*
 	        </div>
 	        <div layout="column" flex="50" ng-class="{'valid':isCurrentRatioValid(), 'invalid':!isCurrentRatioValid()}">
-	            {{ratios.currentRatio}} > 2.0
+	            <div ng-show="ratios.currentRatio !== undefined">
+	            	{{ratios.currentRatio}} > 2.0
+	            </div>
+	            <div ng-show="ratios.currentRatio === undefined">
+	            	Unavailable
+	            </div>
 	        </div>
 	    </div>
 
@@ -62,7 +67,12 @@
 	            Lt-Debt Coverage Ratio*
 	        </div>
 	        <div layout="column" flex="50" ng-class="{'valid':isLongTermDebtCoverageRatioValid(), 'invalid':!isLongTermDebtCoverageRatioValid()}">
-	            {{ratios.longTermDebtCoverageRatio | number:2}} > 1.0
+	        	<div ng-show="ratios.longTermDebtCoverageRatio !== null">
+	            	{{ratios.longTermDebtCoverageRatio | number:2}} > 1.0
+	            </div>
+	            <div ng-show="ratios.longTermDebtCoverageRatio === null">
+	            	Unavailable
+	            </div>
 	        </div>
 	    </div>
 
@@ -129,7 +139,7 @@
 	    </sub>
 
 	    <div layout="row">
-	        Total Points = {{totalpts}}
+	        Total Points = {{totalpts}} / {{outOfPts}}
 	    </div>
 
 	    <div layout="row">
@@ -140,7 +150,7 @@
 	        <div layout="column">
 	            <h3>History - alpha</h3>
 	            <div ng-repeat="each in history">   
-	                {{each.company}} - {{each.score}} / 7
+	                {{each.company}} - {{each.score}} / {{each.outOfScore}}
 	            </div>
 	        </div>
 	    </div>
