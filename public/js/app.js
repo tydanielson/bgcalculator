@@ -19,17 +19,51 @@
 			$httpProvider.defaults.useXDomain = true;
 			delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
-			$urlRouterProvider.otherwise("/home");
+			$urlRouterProvider.otherwise("/calculator");
 			//
 			// Now set up the states
 
 		    $stateProvider
-		        .state('home', {
-		        	url: '/home',
+			    .state("index", {
+	                abstract: true,
+	                views: {
+	                    "home": {
+	                        template: "<div ui-view=\"main\"></div>",
+	                        controller: "MainCtrl"
+	                    }
+	                }
+	            })
+		        .state('index.home', {
+		        	url: '/calculator',
 		            views: {
-		                'home': {
+		                'main': {
 		                    templateUrl: '../partials/main.html',
-		                    controller: 'MainCtrl'
+		                }
+		            }
+		        })
+		       	.state('index.login', {
+		        	url: '/login',
+		        	abstract: true,
+		            views: {
+		                'main': {
+		                    template: '<div ui-view="form"></div>',
+		                    controller: "LoginCtrl"
+		                }
+		            }
+		        })
+		       	.state('index.login.signin', {
+		        	url: '/signin',
+		            views: {
+		                'form': {
+		                    templateUrl: '../partials/login.tpl.html',
+		                }
+		            }
+		        })
+		       	.state('index.login.signup', {
+		        	url: '/signup',
+		            views: {
+		                'form': {
+		                    templateUrl: '../partials/signup.tpl.html',
 		                }
 		            }
 		        })
