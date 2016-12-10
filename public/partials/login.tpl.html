@@ -2,8 +2,8 @@
 	<md-card-content layout="column">
     	<b>Login</b>
     	<div layout="column" layout-gt-xs="row">
-        	<div layout="column" flex>
-				<md-input-container flex>
+        	<div layout="column">
+<!-- 				<md-input-container flex>
                     <label>Email</label>
                     <input type="text" name="email" ng-model="login.email"
                            maxlength="50" required />
@@ -15,9 +15,10 @@
                 </md-input-container>
                 <div layout="row">
 					<md-button class="md-raised md-primary" ui-sref="index.login">Login</md-button>
-					<md-button class="md-raised" ui-sref="index.login.signup">Or Sign-up</md-button>
+					<md-button class="md-raised" ng-click="signin()">Or Sign-up</md-button>
 					<md-button class="md-raised" ui-sref="index.calculator">Cancel</md-button>
-				</div>
+				</div> -->
+                <md-button class="md-raised md-primary" ng-click="googleAuth()">Google Login</md-button>
             </div>
     	</div>
     </md-card-content>

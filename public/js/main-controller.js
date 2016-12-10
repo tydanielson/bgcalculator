@@ -2,7 +2,45 @@
 
 (function(){
 	angular.module('wsi')
-		.controller('MainCtrl', function($scope, $http, $q){
+		.controller('MainCtrl', function($scope, $http, $q, UserService, $firebaseAuth){
+
+		//add user to the resolve at some point... 
+		$scope.user = UserService.getUser();
+		console.log($scope.user);
+		$scope.loggedIn = false;
+
+		if ($scope.user.email !== undefined) {
+			$scope.loggedIn = true;
+		}
+
+		var auth = $firebaseAuth();
+		var provider = new firebase.auth.GoogleAuthProvider();		
+
+		$scope.googleAuth = function () {
+			firebase.auth().signInWithPopup(provider).then(function(result) {
+			  // This gives you a Google Access Token. You can use it to access the Google API.
+			  var token = result.credential.accessToken;
+			  // The signed-in user info.
+			  var user = result.user;
+			  $scope.loggedIn = true;
+			  //dUserService.setUser(user);
+			  console.log(user);
+			  $scope.user = user;
+			  $scope.$apply();
+			  //$scope.reset();
+			  //save the user? 
+			  // ...
+			}).catch(function(error) {
+			  // Handle Errors here.
+			  var errorCode = error.code;
+			  var errorMessage = error.message;
+			  // The email of the user's account used.
+			  var email = error.email;
+			  // The firebase.auth.AuthCredential type that was used.
+			  var credential = error.credential;
+			  // ...
+			});
+		}
 
 		$scope.ratios = {};
 		$scope.quote = {};

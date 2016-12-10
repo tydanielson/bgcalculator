@@ -2,8 +2,10 @@
 
 	angular.module('wsi', [
 		'ngMaterial', 
-		'ui.router'
-	]).config(function($mdThemingProvider, $httpProvider, $urlRouterProvider, $stateProvider) {
+		'ui.router',
+		'firebase'
+	])
+	.config(function($mdThemingProvider, $httpProvider, $urlRouterProvider, $stateProvider) {
 	        $mdThemingProvider.theme('default')
 	            .primaryPalette('green')
 	            .accentPalette('blue');
@@ -33,7 +35,7 @@
 	                    }
 	                }
 	            })
-		        .state('index.home', {
+		        .state('index.calculator', {
 		        	url: '/calculator',
 		            views: {
 		                'main': {
@@ -64,6 +66,14 @@
 		            views: {
 		                'form': {
 		                    templateUrl: '../partials/signup.tpl.html',
+		                }
+		            }
+		        })
+		       	.state('index.login.confirmation', {
+		        	url: '/confirmation',
+		            views: {
+		                'form': {
+		                    templateUrl: '../partials/confirmation.tpl.html',
 		                }
 		            }
 		        })
