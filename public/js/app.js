@@ -2,7 +2,8 @@
 
 	angular.module('wsi', [
 		'ngMaterial', 
-		'ui.router'
+		'ui.router',
+		'ngMessages'
 	]).config(function($mdThemingProvider, $httpProvider, $urlRouterProvider, $stateProvider) {
 	        $mdThemingProvider.theme('default')
 	            .primaryPalette('green')
