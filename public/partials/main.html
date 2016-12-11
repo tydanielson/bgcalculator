@@ -8,8 +8,11 @@
 	        <div layout="row" flex>
 	            
 	            <md-input-container>
-	              <label>Stock Ticker</label>
-	              <input type="text" ng-model="ben.ticker" name="ticker" ng-maxlength="4" required>
+	              	<label>Stock Ticker</label>
+	              	<input type="text" ng-model="ben.ticker" name="ticker" ng-maxlength="4" splimit required>
+	              	<div ng-messages="benForm.ticker.$error">
+						<div ng-message="spvalid">Only S&P 500 stocks allowed</div>
+					</div>
 	            </md-input-container>
 	            <div>
 	                <md-button class="md-raised md-primary" ng-click="getCompanyData()" ng-disabled="benForm.ticker.$invalid">Go</md-button>
