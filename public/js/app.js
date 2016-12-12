@@ -3,9 +3,9 @@
 	angular.module('wsi', [
 		'ngMaterial', 
 		'ui.router',
-		'firebase'
-	])
-	.config(function($mdThemingProvider, $httpProvider, $urlRouterProvider, $stateProvider) {
+		'firebase',
+		'ngMessages'
+	]).config(function($mdThemingProvider, $httpProvider, $urlRouterProvider, $stateProvider) {
 	        $mdThemingProvider.theme('default')
 	            .primaryPalette('green')
 	            .accentPalette('blue');
