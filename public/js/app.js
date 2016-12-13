@@ -3,6 +3,7 @@
 	angular.module('wsi', [
 		'ngMaterial', 
 		'ui.router',
+		'firebase',
 		'ngMessages'
 	]).config(function($mdThemingProvider, $httpProvider, $urlRouterProvider, $stateProvider) {
 	        $mdThemingProvider.theme('default')
@@ -20,20 +21,28 @@
 			$httpProvider.defaults.useXDomain = true;
 			delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
-			$urlRouterProvider.otherwise("/home");
+			$urlRouterProvider.otherwise("/calculator");
 			//
 			// Now set up the states
 
 		    $stateProvider
-		        .state('home', {
-		        	url: '/home',
+			    .state("index", {
+	                abstract: true,
+	                views: {
+	                    "home": {
+	                        template: "<div ui-view=\"main\"></div>",
+	                        controller: "MainCtrl"
+	                    }
+	                }
+	            })
+		        .state('index.calculator', {
+		        	url: '/calculator',
 		            views: {
-		                'home': {
+		                'main': {
 		                    templateUrl: '../partials/main.html',
-		                    controller: 'MainCtrl'
 		                }
 		            }
-		        })
+		        });
 
 	});
 

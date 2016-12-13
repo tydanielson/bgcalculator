@@ -1,6 +1,20 @@
-<md-content class="md-padding">
-
-	<h1 style="font-size: 24px; text-align:center;">ValuVesting Calculator</h1>
+<md-content>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <md-button aria-label="Go Back" href="http://www.valuvesting.com">
+          Go Back
+        </md-button>
+        <h2>
+          <span>Valuvesting Calculator</span>
+        </h2>
+        <span flex></span>
+    	<md-button ng-show="!loggedIn" class="md-raised" ng-click="googleAuth()">Login with Google</md-button>
+    	<div ng-show="loggedIn">
+    		{{user.displayName}}
+    	</div>
+    	<md-button ng-show="loggedIn" class="md-raised" ng-click="logout()">Logout</md-button>
+      </div>
+    </md-toolbar>
 
 	<md-card class="md-padding">
 	<div layout="column">
@@ -16,6 +30,9 @@
 	            </md-input-container>
 	            <div>
 	                <md-button class="md-raised md-primary" ng-click="getCompanyData()" ng-disabled="benForm.ticker.$invalid">Go</md-button>
+	            </div>
+	            <div>
+
 	            </div>
 	        </div>
 	    </ng-form>
