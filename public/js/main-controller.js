@@ -6,7 +6,8 @@
 
 		//add user to the resolve at some point... 
 		$scope.user = UserService.getUser();
-		console.log($scope.user);
+		$scope.ben = {};
+
 		$scope.loggedIn = false;
 
 		if ($scope.user.email !== undefined) {
@@ -19,7 +20,6 @@
 		firebase.auth().onAuthStateChanged(function(user) {
 		  if (user) {
 		    $scope.loggedIn = true;
-			  console.log(user);
 			  $scope.user = user;
 			  $scope.$apply();
 		  } else {
@@ -34,13 +34,11 @@
 			  // The signed-in user info.
 			  var user = result.user;
 			  $scope.loggedIn = true;
-			  //dUserService.setUser(user);
-			  console.log(user);
+
 			  $scope.user = user;
+
 			  $scope.$apply();
-			  //$scope.reset();
-			  //save the user? 
-			  // ...
+
 			}).catch(function(error) {
 			  // Handle Errors here.
 			  var errorCode = error.code;

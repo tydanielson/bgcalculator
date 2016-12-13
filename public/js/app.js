@@ -42,41 +42,7 @@
 		                    templateUrl: '../partials/main.html',
 		                }
 		            }
-		        })
-		       	.state('index.login', {
-		        	url: '/login',
-		        	abstract: true,
-		            views: {
-		                'main': {
-		                    template: '<div ui-view="form"></div>',
-		                    controller: "LoginCtrl"
-		                }
-		            }
-		        })
-		       	.state('index.login.signin', {
-		        	url: '/signin',
-		            views: {
-		                'form': {
-		                    templateUrl: '../partials/login.tpl.html',
-		                }
-		            }
-		        })
-		       	.state('index.login.signup', {
-		        	url: '/signup',
-		            views: {
-		                'form': {
-		                    templateUrl: '../partials/signup.tpl.html',
-		                }
-		            }
-		        })
-		       	.state('index.login.confirmation', {
-		        	url: '/confirmation',
-		            views: {
-		                'form': {
-		                    templateUrl: '../partials/confirmation.tpl.html',
-		                }
-		            }
-		        })
+		        });
 
 	});
 
