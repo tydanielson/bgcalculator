@@ -16,6 +16,17 @@
 		var auth = $firebaseAuth();
 		var provider = new firebase.auth.GoogleAuthProvider();		
 
+		firebase.auth().onAuthStateChanged(function(user) {
+		  if (user) {
+		    $scope.loggedIn = true;
+			  console.log(user);
+			  $scope.user = user;
+			  $scope.$apply();
+		  } else {
+		    // No user is signed in.
+		  }
+		});
+
 		$scope.googleAuth = function () {
 			firebase.auth().signInWithPopup(provider).then(function(result) {
 			  // This gives you a Google Access Token. You can use it to access the Google API.
@@ -41,6 +52,14 @@
 			  // ...
 			});
 		}
+
+		$scope.logout = function () {
+			firebase.auth().signOut().then(function() {
+			  $scope.loggedIn = false;
+			}, function(error) {
+			  // An error happened.
+			});
+		};
 
 		$scope.ratios = {};
 		$scope.quote = {};
