@@ -2,7 +2,7 @@
 
 (function(){
 	angular.module('wsi')
-		.controller('MainCtrl', function($scope, $http, $q, UserService, $firebaseAuth){
+		.controller('MainCtrl', function($scope, $http, $q, UserService, $firebaseAuth, $firebaseObject){
 
 		//add user to the resolve at some point... 
 		$scope.user = UserService.getUser();
@@ -63,6 +63,11 @@
 		$scope.quote = {};
 
 		$scope.history = [];
+		var ref = firebase.database().ref().child("valuvesting");
+		var syncObject = $firebaseObject(ref);
+		  // synchronize the object with a three-way data binding
+		  // click on `index.html` above to see it used in the DOM!
+		  syncObject.$bindTo($scope.history, "valuvesting");
 
 		//revenue over 500 million = one point
 		$scope.isRevenueValid = function(){
