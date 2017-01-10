@@ -15,12 +15,17 @@
 		}
 
 		var auth = $firebaseAuth();
-		var provider = new firebase.auth.GoogleAuthProvider();		
+		var provider = new firebase.auth.GoogleAuthProvider();
+		//var array = $firebaseArray();
 
 		firebase.auth().onAuthStateChanged(function(user) {
 		  if (user) {
-		    $scope.loggedIn = true;
-			  $scope.user = user;
+		      $scope.loggedIn = true;
+		      //var userId = firebase.auth().currentUser.uid;
+		      var ref = firebase.database().ref("/users/" + user.uid);
+			  $scope.user = $firebaseObject(ref);
+			  
+
 			  $scope.$apply();
 		  } else {
 		    // No user is signed in.
@@ -33,9 +38,12 @@
 			  var token = result.credential.accessToken;
 			  // The signed-in user info.
 			  var user = result.user;
-			  $scope.loggedIn = true;
+			  var ref = firebase.database().ref("/users/" + user.uid);
+			  $scope.user = $firebaseObject(ref);
+			  $scope.user.name = user.displayName;
+			  $scope.user.$save();
 
-			  $scope.user = user;
+			  $scope.loggedIn = true;
 
 			  $scope.$apply();
 
@@ -63,11 +71,8 @@
 		$scope.quote = {};
 
 		$scope.history = [];
-		var ref = firebase.database().ref().child("valuvesting");
-		var syncObject = $firebaseObject(ref);
-		  // synchronize the object with a three-way data binding
-		  // click on `index.html` above to see it used in the DOM!
-		  syncObject.$bindTo($scope.history, "valuvesting");
+
+
 
 		//revenue over 500 million = one point
 		$scope.isRevenueValid = function(){
