@@ -26,7 +26,7 @@
 		      var ref = firebase.database().ref("/users/" + user.uid);
 			  $scope.user = $firebaseObject(ref);
 			  
-			  console.log($scope.user);
+			  //console.log($scope.user);
 			  //$scope.history = $scope.user.history;
 
 			  $scope.$apply();
