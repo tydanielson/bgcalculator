@@ -7,6 +7,7 @@
 		//add user to the resolve at some point... 
 		$scope.user = UserService.getUser();
 		$scope.ben = {};
+		//$scope.history = [];
 
 		$scope.loggedIn = false;
 
@@ -25,6 +26,8 @@
 		      var ref = firebase.database().ref("/users/" + user.uid);
 			  $scope.user = $firebaseObject(ref);
 			  
+			  console.log($scope.user);
+			  //$scope.history = $scope.user.history;
 
 			  $scope.$apply();
 		  } else {
@@ -70,7 +73,7 @@
 		$scope.ratios = {};
 		$scope.quote = {};
 
-		$scope.history = [];
+		
 
 
 
@@ -180,7 +183,14 @@
 					tpromise.then(function(data){
 						$scope.totalpts = data[0];
 						$scope.outOfPts = data[1];
-						$scope.history.push({"company" : $scope.quote.Name, "score" : data[0], "outOfScore" : data[1]});
+						if ($scope.user.history === undefined) {
+							$scope.user.history = [];
+						}
+						$scope.user.history.unshift({"company" : $scope.quote.Name, "score" : data[0], "outOfScore" : data[1]});
+						if ($scope.user.history.length >= 6) {
+							$scope.user.history.pop();
+						}
+						$scope.user.$save();
 					});
 				});
 		}; 
@@ -309,6 +319,11 @@
 				});
 				
 		};
+
+		$scope.clearHistory = function () {
+			$scope.user.history = [];
+			$scope.user.$save();
+		}
 
 	});
 })();

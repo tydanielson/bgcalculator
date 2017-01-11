@@ -163,10 +163,10 @@
 	        <hr width="100%" />
 	    </div>
 	    
-	    <div layout="row" ng-show="history.length > 0">
+	    <div layout="row" ng-show="user.history.length > 0">
 	        <div layout="column">
-	            <h3>History - alpha</h3>
-	            <div ng-repeat="each in history">   
+	            <h3>Rolling History <md-button class="md-raised" ng-click="clearHistory()">Clear</md-button></h3>
+	            <div ng-repeat="each in user.history">   
 	                {{each.company}} - {{each.score}} / {{each.outOfScore}}
 	            </div>
 	        </div>
