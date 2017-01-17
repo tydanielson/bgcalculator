@@ -283,7 +283,7 @@
 									'Content-Type': 'application/json'
 								}});
 						}, function(data){
-							alert('Please wait... too many API calls, quote.');
+							alert('PError calling stock data API.');
 						});
 
 					var urlr = 'https://services.last10k.com/v1/company/' + ticker + '/ratios'
@@ -294,9 +294,9 @@
 							$scope.saveRatioData(ticker, ratios);
 
 						}, function(data){
-							alert('Please wait... too many API calls, ratios.');
+							alert('Error calling stock data API.');
 						});
-					return $timeout(60000);
+					return $timeout(2000);
 				});
 			});
 		}
