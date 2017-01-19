@@ -94,6 +94,9 @@
 
 		//p/e less then 15 = one point
 		$scope.isPeRatioValid = function(){
+			if ($scope.quote.PeRatio == null) {
+				return false;
+			}
 			return $scope.quote.PeRatio <= 15 ? true : false;
 		};
 
