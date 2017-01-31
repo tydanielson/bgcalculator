@@ -2,7 +2,10 @@
     <md-toolbar>
       <div class="md-toolbar-tools">
         <h2>
-          <span>Valuvesting</span>
+        	<a href="http://www.valuvesting.com">
+          		<span>Valuvesting</span>
+          		<md-icon>home</md-icon>
+      		</a>
         </h2>
         <span flex></span>
     	<md-button ng-show="!loggedIn" class="md-raised" ng-click="googleAuth()">Google Login</md-button>
@@ -20,7 +23,7 @@
 	            
 	            <md-input-container>
 	              	<label>Enter Stock Ticker</label>
-	              	<input type="text" ng-model="ben.ticker" name="ticker" ng-maxlength="4" splimit required>
+	              	<input type="text" ng-model="ben.ticker" name="ticker" ng-maxlength="4" ng-keypress="($event.which === 13)?getCompanyData():0" splimit required>
 	              	<div ng-messages="benForm.ticker.$error">
 						<div ng-message="spvalid">Only S&P 500 stocks allowed</div>
 					</div>

@@ -22,11 +22,11 @@
 			};
 
 			//p/e less then 15 = one point
-			var isPeRatioValid = function(){
-				if ($scope.quote.PeRatio == null) {
+			var isPeRatioValid = function(quote){
+				if (quote.PeRatio == null) {
 					return false;
 				}
-				return $scope.quote.PeRatio <= 15 ? true : false;
+				return quote.PeRatio <= 15 ? true : false;
 			};
 
 			//p/b ratio less then 1.5 = one point
