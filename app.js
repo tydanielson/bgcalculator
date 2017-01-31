@@ -8,23 +8,13 @@ var cors = require('cors');
 var redis = require('redis');
 var client = redis.createClient();
 var ejs = require('ejs');
-//var mongo = require('mongodb');
-//var mongoose = require('mongoose');
-//mongoose.connect('mongodb://localhost:27017/bpf-omega-api');
 
-//var db = mongoose.connection;
-//db.on('error', console.error.bind(console, 'connection error:'));
-//db.once('open', function () {
-  // we're connected!
-//  console.log('database connected');
-//});
 client.on('connect', function() {
     console.log('connected to redis');
 });
 
+var index = require('./routes/index');
 var stocks = require('./routes/stock');
-//var quote = require('./routes/quote');
-var help = require('./routes/help');
 
 var app = express();
 
@@ -50,7 +40,7 @@ app.use(function(req,res,next){
 
 app.use('/stock', stocks);
 //app.use('/quote', quote);
-app.use('/', help);
+app.use('/', index);
 app.use(cors());
 
 // catch 404 and forward to error handler

@@ -2,10 +2,9 @@
 
 (function(){
 	angular.module('wsi')
-		.controller('MainCtrl', function($scope, $http, $q, UserService, $firebaseAuth, $firebaseObject, $timeout){
+		.controller('MainCtrl', function($scope, $http, $q, $firebaseAuth, $firebaseObject, $timeout, CalculationService){
 
-		//add user to the resolve at some point... 
-		$scope.user = UserService.getUser();
+		$scope.user = {};
 		$scope.ben = {};
 		//$scope.history = [];
 
@@ -25,13 +24,8 @@
 		      //var userId = firebase.auth().currentUser.uid;
 		      var ref = firebase.database().ref("/users/" + user.uid);
 			  $scope.user = $firebaseObject(ref);
-			  
-			  //console.log($scope.user);
-			  //$scope.history = $scope.user.history;
 
 			  $scope.$apply();
-		  } else {
-		    // No user is signed in.
 		  }
 		});
 
@@ -73,103 +67,6 @@
 		$scope.ratios = {};
 		$scope.quote = {};
 
-		
-
-
-
-		//revenue over 500 million = one point
-		$scope.isRevenueValid = function(){
-			return $scope.ratios.revenue >= 500 ? true : false;
-		};
-
-		//greater then 2.0 = half pt
-		$scope.isCurrentRatioValid = function(){
-			return $scope.ratios.currentRatio >= 2.0 ? true : false;
-		};
-
-		//greater then 1.0 = half pt
-		$scope.isLongTermDebtCoverageRatioValid = function(){
-			return $scope.ratios.longTermDebtCoverageRatio >= 1.0 ? true : false;
-		};
-
-		//p/e less then 15 = one point
-		$scope.isPeRatioValid = function(){
-			if ($scope.quote.PeRatio == null) {
-				return false;
-			}
-			return $scope.quote.PeRatio <= 15 ? true : false;
-		};
-
-		//p/b ratio less then 1.5 = one point
-		$scope.isPriceToBookValid = function(){
-			return $scope.quote.priceToBook  <= 1.5 ? true : false;
-		};
-
-		//10 yrs of positive income = one point
-		$scope.isNetIncomeValid = function(){
-			return $scope.ratios.netincome === 10 ? true : false;
-		};
-
-		//10 yrs of dividends = one point
-		$scope.isDividendTotalValid = function(){
-			return $scope.ratios.dividendTotal === 10 ? true : false;
-		};
-
-		//10+ years of earning per share growth over 3%
-		$scope.isRevenueTenYrValid = function(){
-			return $scope.ratios.revenuetenyr >= 3.0 ? true : false;
-		};
-
-		$scope.calculatepts = function() {
-			return $q(function(resolve, reject) { 
-
-				var totalpts = 0;
-				var outOfPts = 6;
-				
-				if ($scope.isRevenueValid()) {
-					totalpts++;
-				}
-
-				//sometimes this data is undefined for some stocks
-				if ($scope.ratios.currentRatio !== undefined) {
-					if ($scope.isCurrentRatioValid()) {
-						totalpts = totalpts + 0.5;
-					}
-					outOfPts = outOfPts + 0.5;
-				}
-
-				//sometimes this data is null for some stocks
-				if ($scope.ratios.longTermDebtCoverageRatio !== null) {
-					if ($scope.isLongTermDebtCoverageRatioValid()) {
-						totalpts = totalpts + 0.5;
-					}
-					outOfPts = outOfPts + 0.5;
-				}
-
-				if ($scope.isPeRatioValid()) {
-					totalpts++;
-				}
-
-				if ($scope.isPriceToBookValid()) {
-					totalpts++;
-				}
-
-				if ($scope.isNetIncomeValid()) {
-					totalpts++;
-				}
-
-				if ($scope.isDividendTotalValid()) {
-					totalpts++;
-				}
-
-				if ($scope.isRevenueTenYrValid()) {
-					totalpts++;
-				}
-				//console.log('got total', totalpts);
-				resolve([totalpts, outOfPts]);
-			});
-		};
-
 		$scope.getCompanyData = function() {
 			//clear out the existing values
 			$scope.ratios = {};
@@ -182,14 +79,15 @@
 					rpromise
 				])
 				.then(function(data) {
-					var tpromise = $scope.calculatepts();
+					var tpromise = CalculationService.calculatepts($scope.ratios, $scope.quote);
 					tpromise.then(function(data){
-						$scope.totalpts = data[0];
-						$scope.outOfPts = data[1];
+						$scope.totalpts = data.totalpts;
+						$scope.outOfPts = data.outOfPts;
+						$scope.stockData = data.stockData;
 						if ($scope.user.history === undefined) {
 							$scope.user.history = [];
 						}
-						$scope.user.history.unshift({"company" : $scope.quote.Name, "score" : data[0], "outOfScore" : data[1]});
+						$scope.user.history.unshift({"company" : $scope.quote.Name, "score" : data.totalpts, "outOfScore" : data.outOfPts});
 						if ($scope.user.history.length >= 6) {
 							$scope.user.history.pop();
 						}
@@ -286,7 +184,7 @@
 									'Content-Type': 'application/json'
 								}});
 						}, function(data){
-							alert('PError calling stock data API.');
+							alert('Error calling stock data API.');
 						});
 
 					var urlr = 'https://services.last10k.com/v1/company/' + ticker + '/ratios'

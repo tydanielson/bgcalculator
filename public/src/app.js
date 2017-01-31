@@ -5,7 +5,7 @@
 		'ui.router',
 		'firebase',
 		'ngMessages'
-	]).config(function($mdThemingProvider, $httpProvider, $urlRouterProvider, $stateProvider) {
+		]).config(function($mdThemingProvider, $httpProvider, $urlRouterProvider, $stateProvider) {
 	        $mdThemingProvider.theme('default')
 	            .primaryPalette('green')
 	            .accentPalette('blue');
@@ -39,7 +39,7 @@
 		        	url: '/calculator',
 		            views: {
 		                'main': {
-		                    templateUrl: '../partials/main.html',
+		                    templateUrl: 'src/components/main.html',
 		                }
 		            }
 		        });

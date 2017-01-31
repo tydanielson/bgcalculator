@@ -19,7 +19,7 @@
 	        <div layout="row" flex>
 	            
 	            <md-input-container>
-	              	<label>Stock Ticker</label>
+	              	<label>Enter Stock Ticker</label>
 	              	<input type="text" ng-model="ben.ticker" name="ticker" ng-maxlength="4" splimit required>
 	              	<div ng-messages="benForm.ticker.$error">
 						<div ng-message="spvalid">Only S&P 500 stocks allowed</div>
@@ -60,7 +60,7 @@
 	        <div layout="column" flex="50">
 	            Annual Revenue
 	        </div>
-	        <div layout="column" flex="50" ng-class="{'valid':isRevenueValid(), 'invalid':!isRevenueValid()}">
+	        <div layout="column" flex="50" ng-class="{'valid':stockData.revenue.passed, 'invalid':!stockData.revenue.passed}">
 	            {{ratios.revenue*10000 | currency:"$":0}} > 500M
 	        </div>
 	    </div>
@@ -69,7 +69,7 @@
 	        <div layout="column" flex="50">
 	            Current Ratio*
 	        </div>
-	        <div layout="column" flex="50" ng-class="{'valid':isCurrentRatioValid(), 'invalid':!isCurrentRatioValid()}">
+	        <div layout="column" flex="50" ng-class="{'valid':stockData.currentRatio.passed, 'invalid':!stockData.currentRatio.passed}">
 	            <div ng-show="ratios.currentRatio !== undefined">
 	            	{{ratios.currentRatio}} > 2.0
 	            </div>
@@ -83,7 +83,7 @@
 	        <div layout="column" flex="50">
 	            Lt-Debt Coverage Ratio*
 	        </div>
-	        <div layout="column" flex="50" ng-class="{'valid':isLongTermDebtCoverageRatioValid(), 'invalid':!isLongTermDebtCoverageRatioValid()}">
+	        <div layout="column" flex="50" ng-class="{'valid':stockData.longTermCovRatio.passed, 'invalid':!stockData.longTermCovRatio.passed}">
 	        	<div ng-show="ratios.longTermDebtCoverageRatio !== null">
 	            	{{ratios.longTermDebtCoverageRatio | number:2}} > 1.0
 	            </div>
@@ -97,7 +97,7 @@
 	        <div layout="column" flex="50">
 	            P/E
 	        </div>
-	        <div layout="column" flex="50" ng-class="{'valid':isPeRatioValid(), 'invalid':!isPeRatioValid()}">
+	        <div layout="column" flex="50" ng-class="{'valid':stockData.peRatio.passed, 'invalid':!stockData.peRatio.passed}">
 	            {{quote.PeRatio}} < 15
 	        </div>
 	    </div>
@@ -106,7 +106,7 @@
 	        <div layout="column" flex="50">
 	            Book Value/Share
 	        </div>
-	        <div layout="column" flex="50" ng-class="{'valid':isPriceToBookValid(), 'invalid':!isPriceToBookValid()}">
+	        <div layout="column" flex="50" ng-class="{'valid':stockData.pbRatio.passed, 'invalid':!stockData.pbRatio.passed}">
 	            {{quote.priceToBook | number:2}} < 1.5
 	        </div>
 	    </div>
@@ -115,25 +115,16 @@
 	        <div layout="column" flex="50">
 	            Years of dividend
 	        </div>
-	        <div layout="column" flex="50" ng-class="{'valid':isDividendTotalValid(), 'invalid':!isDividendTotalValid()}">
+	        <div layout="column" flex="50" ng-class="{'valid':stockData.dividend.passed, 'invalid':!stockData.dividend.passed}">
 	            {{ratios.dividendTotal}} = 10yrs+
 	        </div>
 	    </div>
-	<!-- 
-	    <div layout="row">
-	        <div layout="column" flex="50">
-	            Dividend Annual Total $
-	        </div>
-	        <div layout="column" flex="50">
-	            {{ratios.dividend}}
-	        </div>
-	    </div> -->
 
 	    <div layout="row">
 	        <div layout="column" flex="50">
 	            10yr. Avg. Revenue Growth %
 	        </div>
-	        <div layout="column" flex="50" ng-class="{'valid':isRevenueTenYrValid(), 'invalid':!isRevenueTenYrValid()}">
+	        <div layout="column" flex="50" ng-class="{'valid':stockData.revenuetenyr.passed, 'invalid':!stockData.revenuetenyr.passed}">
 	            {{ratios.revenuetenyr | number:2}} > 3.0
 	        </div>
 	    </div>
@@ -142,7 +133,7 @@
 	        <div layout="column" flex="50">
 	            Years of positive income
 	        </div>
-	        <div layout="column" flex="50" ng-class="{'valid':isNetIncomeValid(), 'invalid':!isNetIncomeValid()}">
+	        <div layout="column" flex="50" ng-class="{'valid':stockData.netIncome.passed, 'invalid':!stockData.netIncome.passed}">
 	            {{ratios.netincome}} = 10yrs+
 	        </div>
 	    </div>
