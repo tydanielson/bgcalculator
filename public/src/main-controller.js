@@ -67,10 +67,6 @@
 		$scope.ratios = {};
 		$scope.quote = {};
 
-
-		//revenue over 500 million = one point
-
-
 		$scope.getCompanyData = function() {
 			//clear out the existing values
 			$scope.ratios = {};
